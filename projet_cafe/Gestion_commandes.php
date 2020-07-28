@@ -4,7 +4,7 @@
 
 <html>
 	<head>
-		<title>Gestion des Commandes</title>
+		<title>Gestion des commandes</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
 		<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
@@ -41,13 +41,13 @@
 				<table id="user_data" class="table table-bordered table-striped">
 					<thead>
 						<tr>
-							<th width="3%">id</th>
-							<th width="12%">id utilisateur</th>
-							<th width="30%">nom comlet</th>
-							<th width="12%">Date & heure</th>
-							<th width="68%">commande</th>
-							<th width="10%">Accepter</th>
-							<th width="10%">effacer</th>
+						<th width="10%">#</th>
+							<th width="10%">id d'utilisateur</th>
+							<th width="35%">nom d'utilisateur</th>
+							<th width="35%">commande</th>
+							<th width="35%">Date & heure</th>
+							<th width="10%">confirmer</th>
+							<th width="10%">Supprimer</th>
 						</tr>
 					</thead>
 				</table>
@@ -58,45 +58,7 @@
 	</body>
 </html>
 
-<div id="userModal" class="modal fade">
-	<div class="modal-dialog">
-		<form method="post" id="user_form" enctype="multipart/form-data">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Ajout utilisateur</h4>
-				</div>
-				<div class="modal-body">
-					<label>Entrez votre nom</label>
-					<input type="text" name="first_name" id="first_name" class="form-control" />
-					<br />
-					<label>Entrez votre prénom</label>
-					<input type="text" name="last_name" id="last_name" class="form-control" />
-					<br />
-					<label>Entez votre Email</label>
-					<input type="text" name="email" id="email" class="form-control" />
-					<br />
-					<label>Entez votre mot de passe</label>
-					<input type="password" name="password" id="password" class="form-control" />
-					<br />
-					<label>confirmez votre mot de passe</label>
-					<input type="password" name="passwordc" id="passwordc" class="form-control" onkeyup='check();'/>
-					<span id='message'></span> 
-					<br />
-					<label>Selectionnez Image</label>
-					<input type="file" name="user_image" id="user_image" />
-					<span id="user_uploaded_image"></span>
-				</div>
-				<div class="modal-footer">
-					<input type="hidden" name="user_id" id="user_id" />
-					<input type="hidden" name="operation" id="operation" />
-					<input type="submit" name="action" id="action" class="btn btn-success" value="Add" />
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
+
 <div class="footer" align="center">
 			<form action="Logout.php" method="post">
 				<input type="submit" class="btn btn-dark" name="logout" value="logout">
@@ -110,7 +72,7 @@ $(document).ready(function(){
 		$('.modal-title').text("Add User");
 		$('#action').val("Add");
 		$('#operation').val("Add");
-		$('#user_uploaded_image').html('');
+		$('#id_user').html('');
 	});
 	
 	var dataTable = $('#user_data').DataTable({
@@ -132,21 +94,12 @@ $(document).ready(function(){
 
 	$(document).on('submit', '#user_form', function(event){
 		event.preventDefault();
-		var firstName = $('#first_name').val();
-		var lastName = $('#last_name').val();
-		var email=$('email').val();
+		var full_name = $('#full_name').val();
+		var detailles = $('#detailles').val();
+		var date=$('date').val();
 		var password=$('password').val();
-		var extension = $('#user_image').val().split('.').pop().toLowerCase();
-		if(extension != '')
-		{
-			if(jQuery.inArray(extension, ['gif','png','jpg','jpeg']) == -1)
-			{
-				alert("Invalid Image File");
-				$('#user_image').val('');
-				return false;
-			}
-		}	
-		if(firstName != '' && lastName != '')
+
+		if(full_name != '' && detailles != '')
 		{
 			$.ajax({
 				url:"insert.php",
@@ -170,22 +123,22 @@ $(document).ready(function(){
 	});
 	
 	$(document).on('click', '.update', function(){
-		var user_id = $(this).attr("id");
+		var id_comande = $(this).attr("id_comande");
 		$.ajax({
 			url:"fetch_single.php",
 			method:"POST",
-			data:{user_id:user_id},
+			data:{id_comande:id_comande},
 			dataType:"json",
 			success:function(data)
 			{
 				$('#userModal').modal('show');
-				$('#first_name').val(data.first_name);
-				$('#last_name').val(data.last_name);
-				$('#email').val(data.email);
+				$('#full_name').val(data.full_name);
+				$('#detailles').val(data.detailles);
+				$('#date').val(data.date);
 				$('#password').val(data.password);
 				$('.modal-title').text("Edit User");
-				$('#user_id').val(user_id);
-				$('#user_uploaded_image').html(data.user_image);
+				$('#id_comande').val(id_comande);
+				$('#id_user').html(data.id_user);
 				$('#action').val("Edit");
 				$('#operation').val("Edit");
 			}
@@ -193,13 +146,13 @@ $(document).ready(function(){
 	});
 	
 	$(document).on('click', '.delete', function(){
-		var user_id = $(this).attr("id");
+		var id_comande = $(this).attr("id_comande");
 		if(confirm("Are you sure you want to delete this?"))
 		{
 			$.ajax({
 				url:"delete.php",
 				method:"POST",
-				data:{user_id:user_id},
+				data:{id_comande:id_comande},
 				success:function(data)
 				{
 					alert(data);
@@ -213,6 +166,27 @@ $(document).ready(function(){
 		}
 	});
 	
+
+	$(document).on('click', '.update', function(){
+		var id_comande = $(this).attr("id_comande");
+		if(confirm("Voulez vous valider la commande?"))
+		{
+			$.ajax({
+				url:"confirm.php",
+				method:"POST",
+				data:{id_comande:id_comande},
+				success:function(data)
+				{
+					alert(data);
+					dataTable.ajax.reload();
+				}
+			});
+		}
+		else
+		{
+			return false;	
+		}
+	});
 	
 });
 </script>
