@@ -1,42 +1,83 @@
 <?php
-include("db1.php");
-include("functions.php");
-
-$jsonobj = get_name($dblink);
-$row= array();
-$row=json_decode($jsonobj, true);
-$final=array();
-$i=0;
-foreach ($row as $detailles)
+include('db.php');
+include('function.php');
+if(isset($_POST["operation"]))
 {
-  $id_prod=$detailles['id_produit'];
-  $quantite=$_POST[$id_prod];
-  if($quantite!=0){
-      while ($i <= count($row)) {
-        $final[$i]['id_produit']=$detailles['id_produit'];
-        $final[$i]['nom']=$detailles['nom'];
-        $final[$i]['Quantite']=$quantite;
-        $i++;
-      }
-  }
+	if($_POST["operation"] == "Add")
+	{
+		$image = '';
+		if($_FILES["user_image"]["name"] != '')
+		{
+			$image = upload_image();
+		}
+		$paswd=$_POST["password"];
+		$paswdc=$_POST["passwordc"];
+		if($paswd==$paswdc){
+			$pass=$paswd;
+		}
+		else $pass='';
+
+		$statement = $connection->prepare("
+			INSERT INTO users (first_name, last_name, email, password, image) 
+			VALUES (:first_name, :last_name, :email, :password, :image)
+		");
+		if ($pass!=''){
+		$result = $statement->execute(
+			array(
+				':first_name'	=>	$_POST["first_name"],
+				':last_name'	=>	$_POST["last_name"],
+				':email'	=>	$_POST["email"],
+				':password' => $pass,
+				':image'		=>	$image
+			)
+		);}
+		if(!empty($result))
+		{
+			echo 'Data Inserted';
+		}
+		else {echo 'le mot de passe de confirmation est différent du mot de passe';}
+	}
+	if($_POST["operation"] == "Edit")
+	{
+		$image = '';
+		if($_FILES["user_image"]["name"] != '')
+		{
+			$image = upload_image();
+		}
+		else
+		{
+			$image = $_POST["hidden_user_image"];
+		}
+		$statement = $connection->prepare(
+			"UPDATE users 
+			SET first_name = :first_name, last_name = :last_name, email=:email, password=:password, image = :image  
+			WHERE id = :id
+			"
+		);
+		$paswd=$_POST["password"];
+		$paswdc=$_POST["passwordc"];
+		if($paswd==$paswdc){
+			$pass=$paswd;
+		}
+		else $pass='';
+		if ($pass!=''){
+		$result = $statement->execute(
+			array(
+				':first_name'	=>	$_POST["first_name"],
+				':last_name'	=>	$_POST["last_name"],
+				':email'	=>	$_POST["email"],
+				'password' => $pass,
+				':image'		=>	$image,
+				':id'			=>	$_POST["user_id"]
+			)
+		);}
+
+		if(!empty($result))
+		{
+			echo 'Data Updated';
+		}
+		else {echo 'le mot de passe de confirmation est différent du mot de passe';}
+	}
 }
 
-
-$detailles1=json_encode($final);
-$id_user=$_GET['id_user'];
-$full_name=$_GET['full_name'];
-
-
-//requete mysql pour insertion des donnés dans la table
-
-
-$sql = "INSERT INTO `commande` (`id_user`, `full_name`, `detailles`) VALUES ('".$id_user."', '".$full_name."', '".$detailles1."');";
-
-if ($dblink->query($sql) === TRUE) {
-  echo "succés";
-} else {
-  echo "Error: " . $sql . "<br>" . $dblink->error;
-}
-
-$dblink->close();
 ?>
