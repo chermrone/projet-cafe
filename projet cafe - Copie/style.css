@@ -1,0 +1,10 @@
+h3{
+    text-align: center;
+}
+.boutonenvoyer{
+    text-decoration-style: solid;
+    margin: auto;
+}
+#envoyer{
+    display: grid;
+}
