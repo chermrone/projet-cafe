@@ -48,11 +48,19 @@
 
         var html = '<div class="input-group ' + config.groupClass + '">' +
             '<div class="input-group-prepend">' +
+<<<<<<< HEAD
             '<button style="min-width: ' + config.buttonsWidth + '" class="btn btn-decrement btn-success ' + config.buttonsClass + '" type="button">' + config.decrementButton + '</button>' +
             '</div>' +
             '<input type="text" inputmode="decimal" style="text-align: ' + config.textAlign + '" class="form-control"/>' +
             '<div class="input-group-append">' +
             '<button style="min-width: ' + config.buttonsWidth + '" class="btn btn-increment btn-danger ' + config.buttonsClass + '" type="button">' + config.incrementButton + '</button>' +
+=======
+            '<button style="min-width: ' + config.buttonsWidth + '" class="btn btn-decrement btn-danger ' + config.buttonsClass + '" type="button">' + config.decrementButton + '</button>' +
+            '</div>' +
+            '<input type="text" inputmode="decimal" style="text-align: ' + config.textAlign + '" class="form-control"/>' +
+            '<div class="input-group-append">' +
+            '<button style="min-width: ' + config.buttonsWidth + '" class="btn btn-increment btn-success ' + config.buttonsClass + '" type="button">' + config.incrementButton + '</button>' +
+>>>>>>> miseajour
             '</div>' +
             '</div>'
 
